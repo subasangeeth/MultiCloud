@@ -49,57 +49,8 @@ AWS EC2  →  Route 53  →  GCP Compute Engine
  * When AWS is UP → Traffic served from AWS
  * When AWS goes DOWN → Route53 automatically switches to GCP
 
-## ⚙️ Startup Scripts
-AWS Startup Script
-#!/bin/bash
-set -e
-PROVIDER="AWS"
 
-# Install nginx
-apt-get update -y || yum update -y
-apt-get install -y nginx || yum install -y nginx
-systemctl enable nginx
-
-# Create health endpoint
-echo "UP" > /var/www/html/health 2>/dev/null || echo "UP" > /usr/share/nginx/html/health
-
-# Create HTML
-WEBROOT="/var/www/html"
-[[ ! -d $WEBROOT ]] && WEBROOT="/usr/share/nginx/html"
-
-cat > ${WEBROOT}/index.html <<'HTML'
-<html><body><h1>NGINX on $(hostname) - PROVIDER</h1></body></html>
-HTML
-
-sed -i "s/PROVIDER/$PROVIDER/g" ${WEBROOT}/index.html
-systemctl restart nginx
-
-- GCP Startup Script
-#!/bin/bash
-set -e
-PROVIDER="GCP"
-
-if command -v apt-get >/dev/null 2>&1; then
-  apt-get update -y
-  apt-get install -y nginx
-  WEBROOT="/var/www/html"
-else
-  yum update -y
-  yum install -y nginx
-  WEBROOT="/usr/share/nginx/html"
-fi
-
-systemctl enable nginx
-echo "UP" > "${WEBROOT}/health"
-
-cat > "${WEBROOT}/index.html" <<'HTML'
-<html><body><h1>NGINX on $(hostname) - PROVIDER</h1></body></html>
-HTML
-
-sed -i "s/PROVIDER/$PROVIDER/g" "${WEBROOT}/index.html"
-systemctl restart nginx
-
-# 🗂️ Route 53 Configuration
+## 🗂️ Route 53 Configuration
 ## ✔ Primary Record
 Key	Value
 Name	nginxx.subasangeeth.run.place
@@ -114,7 +65,9 @@ Type	A
 Routing	Failover – Secondary
 Value	GCP Public IP
 Health Check	
-#🧪 Testing Failover
+
+
+##🧪 Testing Failover
 1️⃣ Check current DNS
 dig +short nginxx.subasangeeth.run.place
 
