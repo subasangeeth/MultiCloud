@@ -1,11 +1,11 @@
-🌐 Multi-Cloud Failover using AWS + Route 53 + GCP
+## 🌐 Multi-Cloud Failover using AWS + Route 53 + GCP
 (Active-Passive Architecture with Automatic Failover)
 
 This project demonstrates a multi-cloud failover setup where traffic is primarily served from AWS EC2 (NGINX), and upon failure, automatically fails over to GCP Compute Engine (NGINX) using Amazon Route 53 Failover Routing with Health Checks.
 
-🚀 Architecture Overview
+#🚀 Architecture Overview
 
-AWS EC2 (Primary Server)
+### AWS EC2 (Primary Server)
 
 Runs NGINX
 
@@ -13,7 +13,7 @@ Hosts /health endpoint
 
 Route 53 monitors this server via health checks
 
-Google Cloud Compute Engine (Secondary Server)
+### Google Cloud Compute Engine (Secondary Server)
 
 Runs NGINX
 
@@ -31,23 +31,25 @@ Automatic failover based on health checks
 
 Domain: subasangeeth.run.place
 
-📘 Technologies Used
-Component	Technology
-Cloud Provider 1	AWS EC2, Route 53
-Cloud Provider 2	Google Cloud Compute Engine
-Web Server	NGINX
-DNS Failover	Route 53 Health Checks
-Automation	Bash Startup Scripts
-Infrastructure	Terraform (optional)
-🧩 Project Diagram
+- 📘 Technologies Used
+1 Component	Technology
+2 Cloud Provider 1	AWS EC2, Route 53
+3 Cloud Provider 2	Google Cloud Compute Engine
+4 Web Server	NGINX
+5 DNS Failover	Route 53 Health Checks
+6 Automation	Bash Startup Scripts
+7 Infrastructure	Terraform 
+
+
+## 🧩 Project Diagram
 AWS EC2  →  Route 53  →  GCP Compute Engine
       (primary)        (failover)
 
 
-When AWS is UP → Traffic served from AWS
-When AWS goes DOWN → Route53 automatically switches to GCP
+ * When AWS is UP → Traffic served from AWS
+ * When AWS goes DOWN → Route53 automatically switches to GCP
 
-⚙️ Startup Scripts
+## ⚙️ Startup Scripts
 AWS Startup Script
 #!/bin/bash
 set -e
@@ -72,7 +74,7 @@ HTML
 sed -i "s/PROVIDER/$PROVIDER/g" ${WEBROOT}/index.html
 systemctl restart nginx
 
-GCP Startup Script
+- GCP Startup Script
 #!/bin/bash
 set -e
 PROVIDER="GCP"
@@ -97,22 +99,22 @@ HTML
 sed -i "s/PROVIDER/$PROVIDER/g" "${WEBROOT}/index.html"
 systemctl restart nginx
 
-🗂️ Route 53 Configuration
-✔ Primary Record
+# 🗂️ Route 53 Configuration
+## ✔ Primary Record
 Key	Value
 Name	nginxx.subasangeeth.run.place
 Type	A
 Routing	Failover – Primary
 Value	AWS Public IP
 Health Check	Enabled
-✔ Secondary Record
+## ✔ Secondary Record
 Key	Value
 Name	nginxx.subasangeeth.run.place
 Type	A
 Routing	Failover – Secondary
 Value	GCP Public IP
-Health Check	Optional
-🧪 Testing Failover
+Health Check	
+#🧪 Testing Failover
 1️⃣ Check current DNS
 dig +short nginxx.subasangeeth.run.place
 
